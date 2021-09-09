@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +27,7 @@ SECRET_KEY = 'django-insecure-0ebi4-_8*6u2pgfpppjk59p+xoijo+v+5*39tk5v(@n*l(ffwu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -38,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
+    'django_extensions',
     
 ]
 
@@ -129,3 +133,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL='dashboard'
 LOGIN_URL='login'
 LOGOUT_URL='logout'
+
+MEDIA_URL='/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+AUTHENTICATION_BACKENDS=[
+'django.contrib.auth.backends.ModelBackend',
+'account.authentication.EmailAuthBackend',
+'social_core.backends.facebook.FacebookOAuth2',
+
+]
+SOCIAL_AUTH_FACEBOOK_KEY='329853538888662'
+SOCIAL_AUTH_FACEBOOK_SECRET='7987e22e72b4adb2ed32f7cea6287a16'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
