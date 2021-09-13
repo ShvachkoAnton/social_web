@@ -4,9 +4,14 @@
 {% block content %}
   <h1>Панель инструментов</h1>
   <p>Добро пожаловать в панель инструментов.
+
+{% with total_images_created=request.user.images_created.count %}
+<p> Количество закладок: {{total_images_created}} </p>
+{% endwith %}
+  Сохранить изображения с других сайтов
+<a href="javascript:{% include 
+"bookmarklet_launcher.js" %}" class="button">Добавить закладку</a>
   Вы можете <a href="{% url "edit" %}">Изменить свой профиль</a>
   или <a href="{% url 'password_change' %}">Сменить пароль</a></p>
- 
-
 
 {% endblock %}
