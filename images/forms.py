@@ -36,5 +36,8 @@ class ImageCreateForm(forms.ModelForm):
                 image.save()
             return image
 
-
-     
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model=Image
+        fields=('title',)
+        widgets={'title':forms.Textarea(attrs={'rows':5,'cols':40})}

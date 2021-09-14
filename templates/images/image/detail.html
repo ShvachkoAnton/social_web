@@ -4,23 +4,66 @@
 {% block content %}
 <h1>{{ image.title }}</h1>
 <img src="{{ image.url }}" class="image-detail">
-
-{% if user.is_authenticated %}
-<form action="{% url 'images:image_like' image.id image.slug%}">
-{% csrf_token %}
-{% if post_is_liked %}
-
-<button type="submit" name="image_id" value="{{image.id}}" class="btn btn-info">Unlike</button>
-
+{% with total_likes=image.users_like.count users_like=image.users_like.all %}
+<div class="image-info">
+      <div>
+        <span class="count">
+        <span class="total">
+          {{ total_likes }} Лайков
+        </span>
+<a href="#" data-id="{{image.id}}"
+data-action="{% if request.user in users_like %}диз{% endif %}лайк" class="like button">
+{% if request.user not in users_like %}
+Лайк
 {% else %}
-<button type="submit" name="image_id" value="{{image.id}}" class="btn btn-info">Like</button>
+Дизлайк
 {% endif %}
-</form>
-{% else %}
- <a class="btn btn-outline-info" href="{% url 'login' %}?next={{request.path}}">>Log in to like this article!</a><br>
-{% endif %}
-<strong class="text-secondary">{{ number_of_likes }}  Like</strong>
+</a>     
+      </div>
+      {{ image.description|linebreaks }}
+    </div>
+    <div class="image-likes">
+{% for user in users_like %}
+<div>
+<img src="{{ user.profile.photo.url }}">
+<p>{{ user.first_name }}</p>
+</div>
+{% empty %}
+Пока что никто не поставил лайк
+{% endfor %}
+</div>
+{% endwith %}
 {% endblock content %}
+{% block domready %}
+  $('a.like').click(function(e){
+    e.preventDefault();
+    $.post('{% url "images:like" %}',
+      {
+        id: $(this).data('id'),
+        action: $(this).data('action')
+      },
+      function(data){
+        if (data['status'] == 'ok')
+        {
+          var previous_action = $('a.like').data('action');
+          // toggle data-action
+          $('a.like').data('action', previous_action == 'лайк' ?
+          'дизлайк' : 'лайк');
+('a.like').text(previous_action == 'лайк' ? 'Дизлайк' :
+          'Лайк');
+          // update total likes
+          var previous_likes = parseInt($('span.count .total').
+text());
+          $('span.count .total').text(previous_action == 'лайк' ?
+          previous_likes + 1 : previous_likes - 1);
+        }
+      }
+    );
+  });
+{% endblock domready  %}
+
+
+
 
 
 
